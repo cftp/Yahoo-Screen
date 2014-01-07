@@ -1,5 +1,4 @@
 <?php
-<?php
 /*
 Plugin Name: CFTP Yahoo Screen
 Description: Yahoo Screen/Video OEmbed support
@@ -12,6 +11,16 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 class CFTP_Yahoo_Screen {
+
+	protected static $_instance = null;
+
+	public static function instance() {
+		if ( !isset( self::$_instance ) ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
 	public function __construct() {
 		wp_embed_register_handler( 'yahoo', '#http://(.+).screen.yahoo.com/(.+)#', array( $this, 'yahoo_embed_handler' ) );
 	}
@@ -29,4 +38,4 @@ class CFTP_Yahoo_Screen {
 	}
 }
 
-new CFTP_Yahoo_Screen();
+add_action( 'init', array( 'CFTP_Yahoo_Screen', 'instance' ) );
