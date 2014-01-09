@@ -23,6 +23,7 @@ class CFTP_Yahoo_Screen {
 
 	public function __construct() {
 		wp_embed_register_handler( 'yahoo', '#http://(.+).screen.yahoo.com/(.+)#', array( $this, 'yahoo_embed_handler' ) );
+		wp_embed_register_handler( 'yahooscreen', '#http://screen.yahoo.com/(.+).html#', array( $this, 'yahoo_embed_handler' ) );
 	}
 
 	function yahoo_embed_handler( $matches, $attr, $url, $rawattr ) {
