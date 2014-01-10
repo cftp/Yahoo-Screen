@@ -1,5 +1,5 @@
 === Yahoo Screen Embed ===
-Contributors: TJNowell, codeforthepeople, johnbillion, s1m0nd, simonwheatley
+Contributors: TJNowell, codeforthepeople, johnbillion, s1m0nd, scottswebb, simonwheatley
 Tags: video, oembed, yahoo
 Requires at least: 3.7
 Tested up to: 3.8
