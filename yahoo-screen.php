@@ -9,6 +9,10 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
+
+add_action( 'init', array( 'CFTP_Yahoo_Screen', 'instance' ) );
+YahooScreenOembedProvider::init();
+
 /**
  * Class CFTP_Yahoo_Screen
  */
@@ -67,8 +71,6 @@ class CFTP_Yahoo_Screen {
 		return $embed;
 	}
 }
-
-add_action( 'init', array( 'CFTP_Yahoo_Screen', 'instance' ) );
 
 
 /**
@@ -214,5 +216,3 @@ class YahooScreenOembedProvider {
 	}
 
 }
-
-YahooScreenOembedProvider::init();
