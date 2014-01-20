@@ -163,13 +163,32 @@ class YahooScreenOembedProvider {
 		$oembed_provider_data['author_name'] = 'Yahoo Screen';
 		$oembed_provider_data['author_url'] = 'http://screen.yahoo.com';
 		$oembed_provider_data['title'] = 'Yahoo Embed Title';
-		// @TODO: Grab the Yahoo video image and add it's URL and dimensions
-		/*if (function_exists('has_post_thumbnail') && has_post_thumbnail($post->ID)) {
-			$image = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID));
-			$oembed_provider_data['thumbnail_url'] = $image[0];
-			$oembed_provider_data['thumbnail_width'] = $image[1];
-			$oembed_provider_data['thumbnail_height'] = $image[2];
-		}*/
+		$image_url = '';
+
+		$remote = wp_remote_get( $url );
+		if ( !is_wp_error( $remote ) ) {
+			// disable the printing of xml errors so we don't break the frontend
+			libxml_use_internal_errors( true );
+			$dom = new DOMDocument();
+			$dom->loadHTML( $remote['body'] );
+			libxml_clear_errors();
+			$metaChildren = $dom->getElementsByTagName( 'meta' );
+			// for each meta tag found
+			for ( $i = 0; $i < $metaChildren->length; $i++ ) {
+				$el = $metaChildren->item( $i );
+				$name = $el->getAttribute( 'name' );
+				if ( $name == 'og:image' ) {
+					// we've found the twitter meta tag for the video player, stop looping
+					$image_url = $el->getAttribute( 'content' );
+					break;
+				}
+			}
+		}
+		if ( !empty( $image_url ) ) {
+			$oembed_provider_data['thumbnail_url'] = $image_url;
+			$oembed_provider_data['thumbnail_width'] = 1024;
+			$oembed_provider_data['thumbnail_height'] = 576;
+		}
 		$oembed_provider_data['type'] = 'rich';
 		$oembed_provider_data['html'] = CFTP_Yahoo_Screen::yahoo_embed_code( $url );
 
