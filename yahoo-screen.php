@@ -10,7 +10,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 
-add_action( 'init', array( 'CFTP_Yahoo_Screen', 'instance' ) );
+//add_action( 'init', array( 'CFTP_Yahoo_Screen', 'instance' ) );
+CFTP_Yahoo_Screen::instance();
 YahooScreenOembedProvider::init();
 
 /**
@@ -42,6 +43,10 @@ class CFTP_Yahoo_Screen {
 	 * Adds the oembed providers
 	 */
 	public function __construct() {
+		$this->add_providers();
+	}
+
+	public function add_providers() {
 		wp_oembed_add_provider( '#https?://(.+).screen.yahoo.com/(.+)#i', site_url('/?oembed=true&oembedtype=yahooscreen&format={format}'), true );
 		wp_oembed_add_provider( '#https?://screen.yahoo.com/(.+).html#i', site_url('/?oembed=true&oembedtype=yahooscreen&format={format}'), true );
 	}
@@ -157,14 +162,11 @@ class YahooScreenOembedProvider {
 	 * @return array OEmbed data to be formatted as a response
 	 */
 	public static function generate_default_content( $oembed_provider_data, $url ) {
-		$oembed_provider_data['version'] = '1.0';
-		$oembed_provider_data['provider_name'] = 'Yahoo Screen';
-		$oembed_provider_data['provider_url'] = home_url();
-		$oembed_provider_data['author_name'] = 'Yahoo Screen';
-		$oembed_provider_data['author_url'] = 'http://screen.yahoo.com';
-		$oembed_provider_data['title'] = 'Yahoo Embed Title';
+		$count = 4;
 		$image_url = '';
-
+		$title = '';
+		$video_height = 1024;
+		$video_width = 576;
 		$remote = wp_remote_get( $url );
 		if ( !is_wp_error( $remote ) ) {
 			// disable the printing of xml errors so we don't break the frontend
@@ -180,14 +182,39 @@ class YahooScreenOembedProvider {
 				if ( $name == 'og:image' ) {
 					// we've found the twitter meta tag for the video player, stop looping
 					$image_url = $el->getAttribute( 'content' );
+					$count--;
+				}
+				if ( $name == 'og:title' ) {
+					// we've found the twitter meta tag for the video player, stop looping
+					$title = $el->getAttribute( 'content' );
+					$count--;
+				}
+				if ( $name == 'og:video:height' ) {
+					// we've found the twitter meta tag for the video player, stop looping
+					$video_height = $el->getAttribute( 'content' );
+					$count--;
+				}
+				if ( $name == 'og:video:weight' ) {
+					// we've found the twitter meta tag for the video player, stop looping
+					$video_width = $el->getAttribute( 'content' );
+					$count--;
+				}
+				if ( $count == 0 ) {
 					break;
 				}
 			}
 		}
+		$oembed_provider_data['version'] = '1.0';
+		$oembed_provider_data['provider_name'] = 'Yahoo Screen';
+		$oembed_provider_data['provider_url'] = home_url();
+		$oembed_provider_data['author_name'] = 'Yahoo Screen';
+		$oembed_provider_data['author_url'] = 'http://screen.yahoo.com';
+		$oembed_provider_data['title'] = $title;
+
 		if ( !empty( $image_url ) ) {
 			$oembed_provider_data['thumbnail_url'] = $image_url;
-			$oembed_provider_data['thumbnail_width'] = 1024;
-			$oembed_provider_data['thumbnail_height'] = 576;
+			$oembed_provider_data['thumbnail_width'] = $video_width;
+			$oembed_provider_data['thumbnail_height'] = $video_height;
 		}
 		$oembed_provider_data['type'] = 'rich';
 		$oembed_provider_data['html'] = CFTP_Yahoo_Screen::yahoo_embed_code( $url );
