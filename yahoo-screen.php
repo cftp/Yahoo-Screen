@@ -216,7 +216,7 @@ class YahooScreenOembedProvider {
 			$oembed_provider_data['thumbnail_width'] = $video_width;
 			$oembed_provider_data['thumbnail_height'] = $video_height;
 		}
-		$oembed_provider_data['type'] = 'rich';
+		$oembed_provider_data['type'] = 'video';
 		$oembed_provider_data['html'] = CFTP_Yahoo_Screen::yahoo_embed_code( $url );
 
 		return $oembed_provider_data;
