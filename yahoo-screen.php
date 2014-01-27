@@ -194,7 +194,7 @@ class YahooScreenOembedProvider {
 					$video_height = $el->getAttribute( 'content' );
 					$count--;
 				}
-				if ( $name == 'og:video:weight' ) {
+				if ( $name == 'og:video:width' ) {
 					// we've found the twitter meta tag for the video player, stop looping
 					$video_width = $el->getAttribute( 'content' );
 					$count--;
